@@ -1,0 +1,29 @@
+class TelophoneList
+    {
+        string name;
+        string phone;
+        string mobile_phone;
+        string description;
+
+        TelophoneList()
+        {
+            name = "Noname";
+            phone = "0000-00-00-00-0000";
+            mobile_phone = "(+000)00-000-0000";
+            description = "None";
+        }
+
+        TelophoneList(string name, string phone, string m_phone, string desc)
+        {
+            this.name = name;
+            this.phone = phone;
+            this.mobile_phone = m_phone;
+            this.description = desc;
+        }
+
+
+        ~TelophoneList()
+        {
+            Console.Write(name + " be good friend. GG");
+        }
+    }
