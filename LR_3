@@ -1,0 +1,36 @@
+class Student
+    {
+        string name;
+        char sex;
+        int age;
+        string phone;
+
+        public void SetName(string name)
+        {
+            if (!name.Equals(""))
+            {
+                this.name = name;
+            }
+        }
+        public void SetSex(char sex)
+        {
+                this.sex = sex;
+        }
+        public void SetAge(int age)
+        {
+            this.age = age;
+        }
+        public void SetPhone(string phone)
+        {
+            this.phone = phone;
+        }
+        public void Print()
+        {
+            Console.WriteLine("#############Info by student "+ this.name+" #############");
+            Console.WriteLine("Student name: \t\t" + this.name);
+            Console.WriteLine("Student sex: \t\t" + this.sex);
+            Console.WriteLine("Student age: \t\t" + this.age);
+            Console.WriteLine("Student phone: \t\t" + this.phone);
+            Console.WriteLine("#############**************#############");
+        }
+    }
