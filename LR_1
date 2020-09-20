@@ -1,0 +1,63 @@
+class Fraction
+    {
+        // Numerator/Denominator
+
+        public int numerator { private set; get; } = 0;
+        public int denominator { private set; get; } = 1;
+
+        public Fraction Add(Fraction other)
+        {
+            Fraction result = new Fraction();
+
+            if (this.denominator == other.denominator)
+            {
+                result.numerator = this.numerator + other.numerator;
+                result.denominator = this.denominator;
+            }
+            else
+            {
+                result.numerator = this.numerator * other.denominator + other.denominator;
+                result.denominator = this.denominator * other.denominator;
+            }
+
+            return result;
+        }
+
+        public Fraction Minus(Fraction other)
+        {
+            Fraction result = new Fraction();
+
+            if (this.denominator == other.denominator)
+            {
+                result.numerator = this.numerator - other.numerator;
+                result.denominator = this.denominator;
+            }
+            else
+            {
+                result.numerator = this.numerator * other.denominator - other.denominator;
+                result.denominator = this.denominator * other.denominator;
+            }
+
+            return result;
+        }
+
+        public Fraction Multiply(Fraction other)
+        {
+            Fraction result = new Fraction();
+
+            result.numerator = this.numerator * other.numerator;
+            result.denominator = this.denominator * other.denominator;
+
+            return result;
+        }
+
+        public Fraction Multiply(int number)
+        {
+            Fraction result = new Fraction();
+
+            result.numerator = this.numerator * number;
+            result.denominator = this.denominator;
+
+            return result;
+        }
+    }
