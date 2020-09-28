@@ -1,0 +1,14 @@
+            //39
+            float a, b;
+            Console.Write("A:\n");
+            a = Convert.ToDouble(Console.Read());
+            Console.Write("B:\n");
+            b = Convert.ToDouble(Console.Read());
+
+            if (a > b)
+                Console.Write("A>B A= " + a);
+            else
+            {
+                Console.Write("A<B A= " + a);
+                Console.Write("A<B B= " + b);
+            }
