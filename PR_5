@@ -1,0 +1,20 @@
+  double[] arr ={ 1, 2, 3 };
+
+            if(arr.Sum() < 1)
+            {
+                for(int i = 0; i < arr.Length; i++)
+                {
+                    if (arr[i] == arr.Min()) arr[i] = arr.Sum() / 2;
+                }
+            }
+            else
+            {
+                if(arr[0] < arr[1])
+                {
+                    arr[0] = (arr[1] + arr[2]) / 2;
+                }
+                else
+                {
+                    arr[1] = (arr[0] + arr[2]) / 2;
+                }
+            }
