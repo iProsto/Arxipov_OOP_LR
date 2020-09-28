@@ -1,0 +1,9 @@
+            //40
+            float a, b;
+            Console.Write("A:\n");
+            a = Convert.ToDouble(Console.Read());
+            Console.Write("B:\n");
+            b = Convert.ToDouble(Console.Read());
+
+            if (a <= b) a = 0;
+            Console.Write("A= " + a + " B= " + b + "\n");
