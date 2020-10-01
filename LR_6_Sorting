@@ -1,0 +1,193 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LR_6_AllSortTypes
+{
+    class Program
+    {
+        const int size = 10;
+        static void Main(string[] args)
+        {
+            double[] arr = new double[size];
+            Random rand = new Random();
+
+            for (int i = 0; i < size; i++)
+            {
+                arr[i] = rand.Next(size + 1);
+            }
+            Sorter.Sort(arr.ToArray(), new HeapSort());
+            Sorter.Sort(arr.ToArray(), new BubbleSort());
+            Sorter.Sort(arr.ToArray(), new SelectionSort());
+            Sorter.Sort(arr.ToArray(), new QuickSort());
+            Sorter.Sort(arr.ToArray(), new InsertionSort());
+        //    Sorter.Sort(arr.ToArray(), new SelectionSort());
+
+            Console.ReadLine();
+        }
+    }
+
+    abstract class SortBase
+    {
+        public abstract double[] Sort(double[] arr);
+        public double[] Swap(double[] arr, int a, int b)
+        {
+            double x = arr[a];
+            arr[a] = arr[b];
+            arr[b] = x;
+            return arr;
+        }
+        public void ShowArray(double[] arr)
+        {
+            for (int i = 0; i < arr.Length; i++)
+            {
+                Console.Write(arr[i] + "\t");
+            }
+            Console.WriteLine();
+        }
+    }
+
+    class SelectionSort : SortBase
+    {
+        public override double[] Sort(double[] array)
+        {
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                int min = i;
+                for (int j = i + 1; j < array.Length; j++)
+                {
+                    if (array[j] < array[min]) min = j;
+                }
+                Swap(array, i, min);
+            }
+            return array;
+        }
+    }
+
+    class HeapSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            for (int i = arr.Length / 2 - 1; i >= 0; i--)
+                Heapify(arr, arr.Length, i);
+            for (int i = arr.Length - 1; i >= 0; i--)
+            {
+                Swap(arr, 0, i);
+                Heapify(arr, i, 0);
+            }
+            return arr;
+        }
+
+        void Heapify(double[] arr, int n, int i)
+        {
+            int largest = i;
+            int leftIndex = 2 * i + 1;
+            int rightIndex = 2 * i + 2;
+
+            if (leftIndex < n && arr[leftIndex] > arr[largest])
+                largest = leftIndex;
+            if (rightIndex < n && arr[rightIndex] > arr[largest])
+                largest = rightIndex;
+            if (largest != i)
+            {
+                Swap(arr, largest, i);
+                Heapify(arr, n, largest);
+            }
+        }
+    }
+
+    class BubbleSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            for (int i = arr.Length; i > 0; i--)
+            {
+                for (int j = 0; j < i - 1; j++)
+                {
+                    if (arr[j] > arr[j + 1]) Swap(arr, j, j + 1);
+                }
+            }
+            return arr;
+        }
+    }
+
+    class Sorter : SortBase
+    {
+        public static void Sort(double[] arr, SortBase method)
+        {
+            method.ShowArray(arr);
+            Console.WriteLine("Sorted by " + method.GetType().ToString() + " : ");
+            method.Sort(arr);
+            method.ShowArray(arr);
+            Console.WriteLine("################################################");
+        }
+        public override double[] Sort(double[] arr)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    class QuickSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            QSort(arr, 0, arr.Length - 1
+);
+            return arr;
+        }
+
+        void QSort(double[] arr, int begin, int end)
+        {
+            int left = begin;
+            int right = end;
+            int pivot = left;
+
+            while (begin < end)
+            {
+                while (arr[end] >= pivot && begin < end) end--;
+                if (begin != end)
+                {
+                    arr[begin] = arr[end];
+                    begin++;
+                }
+                while (arr[begin] < pivot && begin < end) begin++;
+                if (begin != end)
+                {
+                    arr[end] = arr[begin];
+                    end--;
+                }
+            }
+            arr[begin] = pivot;
+            pivot = begin;
+            begin = left;
+            end = right;
+            if (begin < pivot)
+                QSort(arr, begin, pivot - 1);
+            if (end > pivot)
+                QSort(arr, pivot + 1, end);
+        }
+    }
+
+    class InsertionSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                int selector = i;
+                for (int j = i-1; j >= 0; j--)
+                {
+                    if (arr[selector] < arr[j])
+                    {
+                        Swap(arr, selector, j);
+                        selector = j;
+                    }
+                }
+            }
+            return arr;
+        }
+    }
+
+}
