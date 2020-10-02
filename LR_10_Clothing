@@ -1,0 +1,95 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LR_10_Overcoat
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+        }
+    }
+
+    class ClothingBase
+    {
+        public string title { get; protected set; }
+        public int size { get; protected set; }
+        public string color { get; protected set; }
+        public int pocketCount { get; protected set; }
+        public float price { get; protected set; }
+
+
+        public ClothingBase Clone()
+        {
+            ClothingBase newClothing = new ClothingBase();
+
+            newClothing.title = title;
+            newClothing.size = size;
+            newClothing.color = color;
+            newClothing.pocketCount = pocketCount;
+            newClothing.price = price;
+
+            return newClothing;
+        }
+
+        public void Show()
+        {
+            Console.WriteLine("######################" + title + "########################");
+            Console.WriteLine("Size: " + size);
+            Console.WriteLine("Color: " + color);
+            Console.WriteLine("Price ($): " + price);
+            Console.WriteLine("Pocket count: " + pocketCount);
+        }
+    }
+
+    class Overcoat : ClothingBase
+    {
+        public Overcoat(string title, int size, string color, int pocketCount, float price)
+        {
+            this.title = title;
+            this.size = size;
+            this.color = color;
+            this.price = price;
+            this.pocketCount = pocketCount;
+        }
+        public static bool operator ==(Overcoat op1, Overcoat op2)
+        {
+            if (op1.title == op2.title &&
+                op1.size == op2.size &&
+                op1.color == op2.color &&
+                op1.pocketCount == op2.pocketCount)
+                return true;
+            else
+                return false;
+        }
+        public static bool operator !=(Overcoat op1, Overcoat op2)
+        {
+            if (op1.title != op2.title ||
+                op1.size != op2.size ||
+                op1.color != op2.color ||
+                op1.pocketCount != op2.pocketCount)
+                return true;
+            else
+                return false;
+        }
+        public static bool operator <(Overcoat op1, Overcoat op2)
+        {
+            if (op1.title != op2.title) return false;
+            if (op1.price < op2.price)
+                return true;
+            else
+                return false;
+        }
+        public static bool operator >(Overcoat op1, Overcoat op2)
+        {
+            if (op1.title != op2.title) return false;
+            if (op1.price > op2.price)
+                return true;
+            else
+                return false;
+        }
+    }
+}
