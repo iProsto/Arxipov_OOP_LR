@@ -1,0 +1,92 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LR_9_String
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+        }
+    }
+    class AString
+    {
+        public char[] aString { get; private set; }
+        public int Length { get; private set; }
+        public AString(char[] str)
+        {
+            aString = new char[str.Length];
+            for (int i = 0; i < str.Length; i++)
+            {
+                aString[i] = str[i];
+            }
+            Length = str.Length;
+        }
+
+        AString Copy()
+        {
+            return new AString(aString);
+        }
+
+        public static AString operator +(AString a, AString b)
+        {
+            int length = a.aString.Length + b.aString.Length;
+            char[] concat = new char[length];
+
+            for (int i = 0; i < length; i++)
+            {
+                if (i < a.aString.Length)
+                    concat[i] = a.aString[i];
+                else
+                    concat[i] = b.aString[i - a.aString.Length];
+            }
+            return new AString(concat);
+        }
+        public char GetElementByIndex(int i)
+        {
+            if (i < 0 || i >= aString.Length)
+                return '\0';
+            return aString[i];
+        }
+        public void SetString(char[] str)
+        {
+            aString = new char[str.Length];
+            for (int i = 0; i < str.Length; i++)
+            {
+                aString[i] = str[i];
+            }
+            Length = str.Length;
+        }
+        public void SetString(AString str)
+        {
+            aString = new char[str.Length];
+            for (int i = 0; i < str.Length; i++)
+            {
+                aString[i] = str.GetElementByIndex(i);
+            }
+            Length = str.Length;
+        }
+        public static bool operator <(AString str1, AString str2)
+        {
+            if (str1.Length > str2.Length) return false;
+            for(int i = 0; i< str1.Length; i++)
+            {
+                if (str1.GetElementByIndex(i) >= str2.GetElementByIndex(i)) return false;
+            }
+            return true;
+        }
+        public static bool operator >(AString str2, AString str1)
+        {
+            if (str1.Length > str2.Length) return false;
+            for (int i = 0; i < str1.Length; i++)
+            {
+                if (str1.GetElementByIndex(i) > str2.GetElementByIndex(i)) return false;
+            }
+            return true;
+        }
+    }
+}
