@@ -1,0 +1,60 @@
+using System;
+using System.IO;
+
+namespace LR_11_TextFileGenerator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Timer timer = new Timer();
+            TFGenerator tfGenerator = new TFGenerator(10);
+            timer.Start();
+            tfGenerator.GenerateFile(1000000, @"E:\GeneratedFile.txt");
+            Console.WriteLine("Time: " + timer.Stop());
+        }
+    }
+
+    class Timer
+    {
+        long timeStart;
+        int acc = 1000;
+        public void Start()
+        {
+            timeStart = DateTime.Now.Ticks;
+        }
+        public float Stop()
+        {
+            float a = DateTime.Now.Ticks - timeStart;
+            return ((int)((a / 10000000) * acc)) / (float)acc;
+        }
+    }
+
+    class TFGenerator
+    {
+        int wordLength;
+        public TFGenerator(int wordLength)
+        {
+            this.wordLength = wordLength;
+        }
+
+        public void GenerateFile(int wordCount, string filePath = @"E:\GeneratedFile1.txt")
+        {
+            string writePath = filePath;
+            Random rand = new Random();
+            StreamWriter sw = new StreamWriter(writePath, false, System.Text.Encoding.Default);
+            int i = 0, j = 0;
+
+            while (i < wordCount * (wordLength + 1))
+            {
+                if (j % (wordLength + 1) == 0 && j != 0)
+                    sw.Write(' ');
+                else
+                    sw.Write((char)rand.Next(97, 123));
+                ++i;
+                j++;
+            }
+            sw.Close();
+        }
+    }
+}
