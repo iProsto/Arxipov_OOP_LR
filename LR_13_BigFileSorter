@@ -1,0 +1,339 @@
+using System;
+using System.IO;
+
+namespace LR_12_BigFileSorter
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Timer timer = new Timer();
+            /*
+              FileSorter fileSorter = new FileSorter();
+              timer.Start();
+              fileSorter.SortFile(@"E:\GeneratedFile.txt");
+              Console.WriteLine("Time: " + timer.Stop());
+             */
+            char c;
+            FileByString f3 = new FileByString();
+            c = '-';
+            timer.Start();
+            string[] arrayStr = f3.GetChar3(10000000, 10);
+           
+            Console.WriteLine();
+            Console.WriteLine("3)Time: " + timer.Stop());
+            timer.Start();
+            QuickSort.quickSort(arrayStr, 0, arrayStr.Length-1);
+           
+            Console.WriteLine();
+            Console.WriteLine("3)Time: " + timer.Stop());
+
+            Console.Read();
+        }
+    }
+    // 10 000 000 - 8sec
+    class FileSorter
+    {
+        public void SortFile(string filePath)
+        {
+            string writePath = filePath;
+            StreamReader sr = new StreamReader(writePath, System.Text.Encoding.Default);
+
+
+            string[] str = new string[100000];
+            int n = 0;
+            while (sr.Peek() != -1)
+            {
+                char c;
+                string newStr = "";
+                while (sr.Peek() != -1 && (c = (char)sr.Read()) != ' ')
+                {
+                    newStr += c;
+                }
+                str[n++] = newStr;
+            }
+
+
+            bool flag = true;
+            while (flag)
+            {
+                flag = false;
+                for (int i = 0; i < str.Length - 1; ++i)
+                    if (str[i].CompareTo(str[i + 1]) > 0)
+                    {
+                        string buf = str[i];
+                        str[i] = str[i + 1];
+                        str[i + 1] = buf;
+                        flag = true;
+                    }
+            }
+            foreach (string s in str)
+                Console.Write(s + " ");
+            Console.WriteLine();
+
+            sr.Close();
+        }
+    }
+
+    class FileByString
+    {
+        public int iterator { get; private set; }
+        public bool end { get; private set; }
+        string path;
+        StreamReader file = null;
+
+        public FileByString(string path = @"E:\GeneratedFile.txt")
+        {
+            this.path = path;
+            file = new StreamReader(path, System.Text.Encoding.Default);
+        }
+
+        public char GetChar(int index) //By 50k words
+        {
+            int i = 0;
+            while (i < index)
+            {
+                file.Read();
+                i++;
+            }
+            char c = (char)file.Read();
+            file.Close();
+            return c;
+        }
+
+        public string[] GetChar3(int wordCount, int wordLength) //Over 50k words method
+        {
+            //  string str = file.ReadToEnd();
+
+            string[] str = new string[wordCount];
+            int i = 0;
+            int iterator = 0;
+            string word = "";
+            while (i < wordCount * (wordLength + 1))
+            {
+                if (file.Peek() == ' ')
+                {
+                    str[iterator++] = word;
+                    word = "";
+                    file.Read();
+                }
+                else
+                {
+                    word += (char)file.Read();
+                }
+                i++;
+            }
+
+            file.Close();
+            return str;
+        }
+
+    }
+
+
+
+    abstract class SortBase
+    {
+        public abstract int[] Sort(int[] arr);
+        public int[] Swap(int[] arr, int a, int b)
+        {
+            int x = arr[a];
+            arr[a] = arr[b];
+            arr[b] = x;
+            return arr;
+        }
+        public void ShowArray(int[] arr)
+        {
+            for (int i = 0; i < arr.Length; i++)
+            {
+                Console.Write(arr[i] + "\t");
+            }
+            Console.WriteLine();
+        }
+    }
+    /*
+    class SelectionSort : SortBase
+    {
+        public override double[] Sort(double[] array)
+        {
+            for (int i = 0; i < array.Length - 1; i++)
+            {
+                int min = i;
+                for (int j = i + 1; j < array.Length; j++)
+                {
+                    if (array[j] < array[min]) min = j;
+                }
+                Swap(array, i, min);
+            }
+            return array;
+        }
+    }
+
+    class HeapSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            for (int i = arr.Length / 2 - 1; i >= 0; i--)
+                Heapify(arr, arr.Length, i);
+            for (int i = arr.Length - 1; i >= 0; i--)
+            {
+                Swap(arr, 0, i);
+                Heapify(arr, i, 0);
+            }
+            return arr;
+        }
+
+        void Heapify(double[] arr, int n, int i)
+        {
+            int largest = i;
+            int leftIndex = 2 * i + 1;
+            int rightIndex = 2 * i + 2;
+
+            if (leftIndex < n && arr[leftIndex] > arr[largest])
+                largest = leftIndex;
+            if (rightIndex < n && arr[rightIndex] > arr[largest])
+                largest = rightIndex;
+            if (largest != i)
+            {
+                Swap(arr, largest, i);
+                Heapify(arr, n, largest);
+            }
+        }
+    }
+
+    class BubbleSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            for (int i = arr.Length; i > 0; i--)
+            {
+                for (int j = 0; j < i - 1; j++)
+                {
+                    if (arr[j] > arr[j + 1]) Swap(arr, j, j + 1);
+                }
+            }
+            return arr;
+        }
+    }
+
+    class Sorter : SortBase
+    {
+        public static void Sort(double[] arr, SortBase method)
+        {
+            method.ShowArray(arr);
+            Console.WriteLine("Sorted by " + method.GetType().ToString() + " : ");
+            method.Sort(arr);
+            method.ShowArray(arr);
+            Console.WriteLine("################################################");
+        }
+        public override double[] Sort(double[] arr)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    */
+    class QuickSort : SortBase
+    {
+        public override int[] Sort(int[] arr)
+        {
+            QSort(arr, 0, arr.Length - 1);
+            return arr;
+        }
+
+        void QSort(int[] arr, int begin, int end)
+        {
+            int left = begin;
+            int right = end;
+            int pivot = left;
+
+            while (begin < end)
+            {
+                while (arr[end] >= pivot && begin < end) end--;
+                if (begin != end)
+                {
+                    arr[begin] = arr[end];
+                    begin++;
+                }
+                while (arr[begin] < pivot && begin < end) begin++;
+                if (begin != end)
+                {
+                    arr[end] = arr[begin];
+                    end--;
+                }
+            }
+            arr[begin] = pivot;
+            pivot = begin;
+            begin = left;
+            end = right;
+            if (begin < pivot)
+                QSort(arr, begin, pivot - 1);
+            if (end > pivot)
+                QSort(arr, pivot + 1, end);
+        }
+
+        static public void quickSort(string[] a, int l, int r)
+        {
+            string temp;
+            var x = a[l + (r - l) / 2];
+            int i = l;
+            int j = r;
+
+            while (i <= j)
+            {
+                while (string.CompareOrdinal(a[i], x) < 0) i++;
+                while (string.CompareOrdinal(a[j], x) > 0) j--;
+                if (i <= j)
+                {
+                    temp = a[i];
+                    a[i] = a[j];
+                    a[j] = temp;
+                    i++;
+                    j--;
+                }
+            }
+            if (i < r)
+                quickSort(a, i, r);
+
+            if (l < j)
+                quickSort(a, l, j);
+        }
+    }
+    /*
+    class InsertionSort : SortBase
+    {
+        public override double[] Sort(double[] arr)
+        {
+            for (int i = 1; i < arr.Length; i++)
+            {
+                int selector = i;
+                for (int j = i - 1; j >= 0; j--)
+                {
+                    if (arr[selector] < arr[j])
+                    {
+                        Swap(arr, selector, j);
+                        selector = j;
+                    }
+                }
+            }
+            return arr;
+        }
+    }
+
+    
+    */
+
+    class Timer
+    {
+        long timeStart;
+        int acc = 1000;
+        public void Start()
+        {
+            timeStart = DateTime.Now.Ticks;
+        }
+        public float Stop()
+        {
+            float a = DateTime.Now.Ticks - timeStart;
+            return ((int)((a / 10000000) * acc)) / (float)acc;
+        }
+    }
+}
