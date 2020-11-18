@@ -1,0 +1,108 @@
+using System;
+
+namespace LR_13_DynArr
+{
+    /*
+     1. Создайте класс динамического массива, в котором
+реализована проверка выхода за границы массива.
+Перегрузите операторы: [ ], =, +, -,++ (добавление
+элемента в конец массива), –– (удаление элемента из
+конца массива).
+     */
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            String a = "";
+            String b = "";
+            Console.Read();
+        }
+
+
+        class DynArray<T>
+        {
+            public int length { private set; get; }
+            private T[] arr;
+            private T defElement;
+
+            public DynArray(T def)
+            {
+                arr = new T[0];
+                length = 0;
+                defElement = def;
+            }
+
+            public T this[int i]
+            {
+                get
+                {
+                    if (i < length && i >= 0)
+                    {
+                        return arr[i];
+                    }
+                    return defElement;
+                }
+                set
+                {
+                    if (i < length && i >= 0)
+                    {
+                        arr[i] = value;
+                    }
+                }
+            }
+
+            public static DynArray<T> operator +(DynArray<T> a, DynArray<T> b)
+            {
+                DynArray<T> tempObj = new DynArray<T>(default);
+
+                for (int i = 0; i < a.length; i++)
+                {
+                    tempObj.push(a[i]);
+                }
+                for (int i = 0; i < b.length; i++)
+                {
+                    tempObj.push(b[i]);
+                }
+
+                return tempObj;
+            }
+
+            public static DynArray<T> operator --(DynArray<T> elem)
+            {
+                elem.pop();
+                return elem;
+            }
+
+            public void push(T val)
+            {
+                T[] tempArr = new T[length + 1];
+                for (int i = 0; i < length; i++)
+                {
+                    tempArr[i] = arr[i];
+                }
+
+                length++;
+            }
+
+            public T pop()
+            {
+                if (length > 0)
+                {
+                    T[] tempArr = new T[length - 1];
+                    T tempElem = arr[length - 1];
+                    for (int i = 0; i < length - 1; i++)
+                    {
+                        tempArr[i] = arr[i];
+                    }
+
+                    length--;
+                    arr = tempArr;
+                    return tempElem;
+                }
+
+                return defElement;
+            }
+
+        }
+    }
+}
