@@ -1,0 +1,106 @@
+using System;
+
+namespace LR_18_FlatClass
+{
+    /*
+     Написать клас Flat реалізувать перегружені оператори 
+    1) == площі квартир 
+    2) операцію присваювання одного обєкта в інший 
+    3) порівняння 2 квартир по вартості,гетери сетери виведення інформації
+     */
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            Console.Read();
+        }
+
+        class Flat
+        {
+            private int roomCount;
+            private float area;
+            private float price;
+
+            public Flat(int roomCount, float area, float price)
+            {
+                this.roomCount = roomCount;
+                this.area = area;
+                this.price = price;
+            }
+
+            public static bool operator ==(Flat a, Flat b)
+            {
+                const float minDif = 1;
+                float diferentRoomCount = Math.Abs(a.roomCount - b.roomCount);
+                float diferentAreaSize = Math.Abs(a.area - b.area);
+                if (diferentAreaSize < minDif)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public static bool operator !=(Flat a, Flat b)
+            {
+                const float minDif = 1;
+                float diferentRoomCount = Math.Abs(a.roomCount - b.roomCount);
+                float diferentAreaSize = Math.Abs(a.area - b.area);
+                if (diferentAreaSize >= minDif)
+                {
+                    return true;
+                }
+                return false;
+            }
+
+            public Flat copy(Flat flat)
+            {
+                this.roomCount = flat.roomCount;
+                this.area = flat.area;
+                this.price = flat.price;
+                return this;
+            }
+            public int rooms
+            {
+                get => roomCount;
+                set
+                {
+                    if (value >= 0)
+                    {
+                        roomCount = value;
+                    }
+                }
+            }
+            public float cost
+            {
+                get => price;
+                set
+                {
+                    if (value >= 0)
+                    {
+                        cost = value;
+                    }
+                }
+            }
+            public float areaSize
+            {
+                get => area;
+                set
+                {
+                    if (value >= 0)
+                    {
+                        area = value;
+                    }
+                }
+            }
+
+            public void showInfo()
+            {
+                Console.WriteLine("##Flat##");
+                Console.WriteLine("Price: "+ price);
+                Console.WriteLine("Area size: " + area);
+                Console.WriteLine("Rooms: " + roomCount);
+            }
+        }
+    }
+}
