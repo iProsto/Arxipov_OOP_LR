@@ -29,10 +29,20 @@ namespace LR_18_FlatClass
                 this.price = price;
             }
 
+            public bool costComparison(Flat other)
+            {
+                const float minDif = 0.4f;
+                float diferentPrice = Math.Abs(this.price - other.price);
+                if (diferentPrice < minDif)
+                {
+                    return true;
+                }
+                return false;
+            }
+
             public static bool operator ==(Flat a, Flat b)
             {
-                const float minDif = 1;
-                float diferentRoomCount = Math.Abs(a.roomCount - b.roomCount);
+                const float minDif = 0.4f;
                 float diferentAreaSize = Math.Abs(a.area - b.area);
                 if (diferentAreaSize < minDif)
                 {
@@ -43,8 +53,7 @@ namespace LR_18_FlatClass
 
             public static bool operator !=(Flat a, Flat b)
             {
-                const float minDif = 1;
-                float diferentRoomCount = Math.Abs(a.roomCount - b.roomCount);
+                const float minDif = 0.4f;
                 float diferentAreaSize = Math.Abs(a.area - b.area);
                 if (diferentAreaSize >= minDif)
                 {
