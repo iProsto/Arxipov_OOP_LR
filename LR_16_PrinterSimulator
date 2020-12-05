@@ -1,0 +1,158 @@
+using System;
+using System.Collections.Generic;
+
+/*
+ 4. Разработать приложение, имитирующее очередь печати принтера. 
+Должны быть клиенты, посылающие запросы на принтер, у каждого из которых есть свой приоритет. 
+Каждый новый клиент попадает в очередь в зависимости от своего приоритета. 
+Необходимо сохранять статистику печати (пользователь, время) в отдельной очереди. 
+Предусмотреть вывод статистики на экран.
+ */
+namespace LR_17_PrinterManager
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Printer epson = new Printer();
+
+
+            epson.addClient(new Client(3));
+            epson.addClient(new Client(4));
+            epson.addClient(new Client(5));
+            epson.addClient(new Client(5));
+            epson.addClient(new Client(4));
+            epson.addClient(new Client(7));
+            epson.addClient(new Client(2));
+            epson.addClient(new Client(2));
+
+            epson.on();
+
+            epson.printClientInfo();
+
+            Console.Read();
+        }
+    }
+
+    class Client
+    {
+        private static int clientId = 0;
+        public int priority { private set; get; }
+        public String name { private set; get; }
+
+        public Client(int priority)
+        {
+            this.priority = priority;
+            clientId++;
+            name = new String("Client" + clientId);
+        }
+
+        public String getDocument()
+        {
+            return new String("Printed new document. Client: " + name);
+        }
+    }
+
+    class Printer
+    {
+        private Queue<String> infoDB;
+        ClientQueue docQueue;
+
+        public Printer()
+        {
+            infoDB = new Queue<String>();
+            docQueue = new ClientQueue();
+        }
+
+        public void printClientInfo()
+        {
+            int i = 1;
+            Console.WriteLine("#######################-_PrinterInfo_-###############################");
+            Console.WriteLine("ID\tClient Name\tPriority");
+            while (infoDB.Count > 0)
+            {
+                Console.Write(i + ". ");
+                Console.WriteLine(infoDB.Dequeue());
+                i++;
+            }
+        }
+
+        public void on()
+        {
+            int count = docQueue.length;
+            for (int i = 0; i < count; i++)
+            {
+                Client next = docQueue.getNext();
+                Console.WriteLine(next.getDocument());
+                infoDB.Enqueue(new String("\t" + next.name + "\t\t" + next.priority));
+            }
+        }
+
+        public void addClient(Client client)
+        {
+            docQueue.push(client);
+            Console.WriteLine("Printer got new client: " + client.name);
+        }
+
+        class ClientQueue
+        {
+            private Client[] clients;
+            public int length { private set; get; }
+            public ClientQueue()
+            {
+                clients = new Client[0];
+            }
+
+            public Client getNext()
+            {
+                if (length > 0)
+                {
+                    Client[] tempClients = new Client[length - 1];
+                    Client tempClient = clients[0];
+                    for (int i = 1; i < length; i++)
+                    {
+                        tempClients[i - 1] = clients[i];
+                    }
+                    length--;
+                    clients = tempClients;
+
+                    return tempClient;
+                }
+                return null;
+            }
+
+            public void push(Client client)
+            {
+                Client[] tempClients = new Client[length + 1];
+
+                bool added = false;
+                int iterator = 0;
+                for (int i = 0; i < length + 1; i++)
+                {
+                    if (iterator < length)
+                    {
+                        Client oldClient = clients[iterator];
+                        if (client.priority > oldClient.priority && !added)
+                        {
+                            tempClients[i] = client;
+                            added = true;
+                        }
+                        else
+                        {
+                            tempClients[i] = oldClient;
+                            iterator++;
+                        }
+                    }
+                    else if(!added)
+                    {
+                        tempClients[i] = client;
+                        added = true;
+                    }
+                }
+
+                length++;
+                clients = tempClients;
+            }
+        }
+    }
+}
