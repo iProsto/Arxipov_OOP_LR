@@ -1,0 +1,230 @@
+using System;
+using System.Collections.Generic;
+
+
+/*
+ 3. Создать имитационную модель "остановка маршрутных
+такси". 
+Необходимо вводить следующую информацию:
+    среднее время между появлениями пассажиров на остановке в разное время суток, 
+    среднее время между появлениями маршруток на остановке в разное время суток, 
+    тип остановки (конечная или нет). 
+
+Количество свободных мест в маршрутке является случайной величиной.
+
+Необходимо определить:
+    среднее время пребывание человека на остановке, 
+    достаточный интервал времени между приходами маршруток, чтобы на остановке находилось не более N людей одновременно.
+     */
+namespace LR_15_WayTaxi
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            TimeType avgTimeAriseTaxi = new TimeType(TimeTypes.DAY, 4);
+            TimeType avgTimeArisePassenger = new TimeType(TimeTypes.DAY, 10);
+            StationType stationType = new StationType(StationTypes.IMPASSE);
+
+            StopStation shewchenka17 = new StopStation(avgTimeArisePassenger, avgTimeAriseTaxi, stationType);
+
+            Console.WriteLine("Test result:");
+            Console.WriteLine("Average time human was on station: " + shewchenka17.simulation(10, 10f) + ";"); //Задать в симуляцию нужно такие параметры: общее время симуляции в каких-то единицах (минуты, часы, миллисекунды и тд), и точность симуляции (чем больше точность симуляции, тем более точными будут результаты)
+            Console.WriteLine("Interval: " + shewchenka17.startIntervalSimulation(10, 10f, 10) + ";"); //Первые два параметра такие же как и при обычной симуляции, третий же - это то Н-нное кол-во людей, граничный максимум человек на остановке.
+
+            Console.Read();
+        }
+    }
+
+    public enum StationTypes { IMPASSE, NOT_IMPASSE };
+    public enum TimeTypes { MORNING, DAY, EVENING };
+
+    public class TimeType
+    {
+        private TimeTypes type;
+        public float value { get; private set; }
+
+        public TimeType(TimeTypes time, float value)
+        {
+            type = time;
+            this.value = value;
+        }
+    }
+
+    public class StationType
+    {
+        private StationTypes type;
+        private const int MIN_IMPASSE_VALUE = 10;
+        private const int MAX_IMPASSE_VALUE = 24;
+        private const int MIN_NOT_IMPASSE_VALUE = 0;
+        private const int MAX_NOT_IMPASSE_VALUE = 20;
+
+        public StationType(StationTypes type)
+        {
+            this.type = type;
+        }
+        public int min()
+        {
+            if (type == StationTypes.IMPASSE)
+            {
+                return MIN_IMPASSE_VALUE;
+            }
+            else
+            {
+                return MIN_NOT_IMPASSE_VALUE;
+            }
+        }
+        public int max()
+        {
+            if (type == StationTypes.IMPASSE)
+            {
+                return MAX_IMPASSE_VALUE;
+            }
+            else
+            {
+                return MAX_NOT_IMPASSE_VALUE;
+            }
+        }
+    }
+
+    public class Taxi
+    {
+        private int countFreePlace;
+
+        public Taxi(StationType stationType)
+        {
+            Random rand = new Random();
+            countFreePlace = rand.Next(stationType.min(), stationType.max());
+        }
+        public float takeAwayPassengers(ref Queue<Passenger> passengers)
+        {
+            float avgTimeWaiting = 0f;
+            for (int i = 0; i < countFreePlace; i++)
+            {
+                if (passengers.Count > 0)
+                    avgTimeWaiting += passengers.Dequeue().timeWait;
+            }
+
+            avgTimeWaiting /= countFreePlace;
+
+            return avgTimeWaiting;
+        }
+    }
+
+    public class Passenger
+    {
+        public float timeWait { get; private set; }
+
+        public Passenger()
+        {
+            timeWait = 0;
+        }
+
+        public void wait(float time)
+        {
+            timeWait += time;
+        }
+    }
+
+    public class StopStation
+    {
+        TimeType timeTypeP;
+        TimeType timeTypeT;
+        StationType stationType;
+
+        public StopStation(TimeType timePasseger, TimeType timeTaxi, StationType stationType)
+        {
+            timeTypeP = timePasseger;
+            timeTypeT = timeTaxi;
+            this.stationType = stationType;
+        }
+
+        public float simulation(int simalatuonTime, float precision)
+        {
+            Queue<Passenger> passengers = new Queue<Passenger>();
+
+            float nextPassenger = 0f;
+            float nextTaxi = timeTypeT.value;
+
+            float avgTimeWaitingPassenger = 0f;
+            int taxiCount = 0;
+
+            for (float i = 0; i < simalatuonTime; i += 1f / precision)
+            {
+                if (nextPassenger < i)
+                {
+                    nextPassenger += timeTypeP.value;
+                    passengers.Enqueue(new Passenger());
+                }
+
+                foreach (Passenger passenger in passengers)
+                {
+                    passenger.wait(1f / precision);
+                }
+
+                if (nextTaxi < i)
+                {
+                    nextTaxi += timeTypeT.value;
+
+                    Taxi taxi = new Taxi(stationType);
+                    avgTimeWaitingPassenger += taxi.takeAwayPassengers(ref passengers);
+                    taxiCount++;
+                }
+            }
+
+            avgTimeWaitingPassenger /= taxiCount;
+
+            return avgTimeWaitingPassenger;
+        }
+
+        public float startIntervalSimulation(int simalatuonTime, float precision, int n)
+        {
+            float timeInterval = 0f;
+
+            Queue<Passenger> passengers = new Queue<Passenger>();
+
+            float nextPassenger = 0f;
+            float nextTaxi = timeInterval;
+
+            precision = 1f / precision;
+
+            bool endSimulation = false;
+            while (!endSimulation)
+            {
+                nextTaxi = timeInterval;
+                nextPassenger = 0f;
+                passengers = new Queue<Passenger>();
+                timeInterval += precision;
+
+                for (float i = 0; i < simalatuonTime; i += precision)
+                {
+                    if (nextPassenger < i)
+                    {
+                        nextPassenger += timeTypeP.value;
+                        passengers.Enqueue(new Passenger());
+                    }
+
+                    if (nextTaxi < i)
+                    {
+                        nextTaxi += timeInterval;
+
+                        Taxi taxi = new Taxi(stationType);
+                        taxi.takeAwayPassengers(ref passengers);
+                    }
+
+
+                    if (passengers.Count > n)
+                    {
+                        endSimulation = false;
+                        break;
+                    }
+                    else
+                        endSimulation = true;
+                }
+            }
+
+            return timeInterval;
+        }
+
+    }
+}
