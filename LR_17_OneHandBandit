@@ -1,0 +1,119 @@
+using System;
+using System.Threading;
+
+
+/*
+  Создать имитацию игры "однорукий бандит". 
+Например, при нажатии кнопки «Enter» происходит «вращение»
+трех барабанов (естественно, количество вращений
+каждого из них выбирается случайно), на которых изображены разные значки;
+и если выпадает определенная комбинация, то игрок получает какой-то выигрыш.
+ */
+
+namespace LR_17_OneHandBandit
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            BanditBox b = new BanditBox();
+            b.start();
+
+            Console.ReadLine();
+        }
+
+        class BanditBox
+        {
+            private char[] slots;
+            private const int MIN_SPEED = 100;
+            private const int MAX_SPEED = 200;
+
+            public BanditBox()
+            {
+                slots = new char[3] { '0', '0', '0' };
+            }
+
+            private bool go()
+            {
+                Random r = new Random();
+                Wheel[] wheels = new Wheel[3];
+                wheels[0] = wheelController(r.Next(MIN_SPEED, MAX_SPEED));
+                wheels[1] = wheelController(r.Next(MIN_SPEED, MAX_SPEED));
+                wheels[2] = wheelController(r.Next(MIN_SPEED, MAX_SPEED));
+
+                bool gameOver = false;
+                while (!gameOver)
+                {
+                    Console.Clear();
+                    Console.Write(wheels[0].currentSlot + "" + wheels[1].currentSlot + "" + wheels[2].currentSlot);
+                    if (wheels[0].end && wheels[1].end && wheels[2].end)
+                        gameOver = true;
+                }
+                Console.WriteLine();
+                return wheels[0].currentSlot.Equals(wheels[1].currentSlot) && wheels[2].currentSlot.Equals(wheels[1].currentSlot);
+            }
+
+            public void start()
+            {
+                if (go())
+                {
+                    Console.WriteLine("You won!");
+                }
+                else
+                {
+                    Console.WriteLine("Ha! Loser!");
+                }
+            }
+
+            private Wheel wheelController(int speed)
+            {
+                const int MIN_SPINS = 25;
+                const int MAX_SPINS = 39;
+                Random r = new Random();
+                Wheel w = new Wheel(speed, r.Next(MIN_SPINS, MAX_SPINS));
+                Thread thread = new Thread(new ThreadStart(w.spin));
+                thread.Start();
+                return w;
+            }
+
+            class Wheel
+            {
+                private int speed;
+                private const int size = 6;
+                private int x = 0;
+                private char[] chars = new char[size] { '=', '*', '-', '7', 'J', '$' };
+                public bool end { private set; get; } = false;
+                private int spinsCount;
+                public char currentSlot { private set; get; } = '0';
+
+
+                public Wheel(int speed, int spinsCount)
+                {
+                    this.speed = speed;
+                    this.spinsCount = spinsCount;
+                }
+
+                public void spin()
+                {
+                    for (int i = 0; i < spinsCount; i++)
+                    {
+                        if (x >= size) x = 0;
+                        currentSlot = chars[x++];
+                        Thread.Sleep((int)MathF.Abs(speed));
+                    }
+                    end = true;
+                }
+            }
+        }
+
+        private static void thTask()
+        {
+            for (int i = 0; i < 20; i++)
+            {
+                Console.Clear();
+                Console.WriteLine(i);
+                Thread.Sleep(500);
+            }
+        }
+    }
+}
